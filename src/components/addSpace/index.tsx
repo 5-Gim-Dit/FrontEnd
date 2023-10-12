@@ -1,12 +1,22 @@
 import styled from "styled-components";
+import { useAddSpace } from "../../apis/database";
+import { useInput } from "../../hooks/useInput";
 
 export const AddSpace = () => {
+    const { form, handleChange } = useInput("");
+    const { mutate } = useAddSpace(form);
     return (
         <Container>
             <TitleText>스페이스 생성</TitleText>
             <ContentsText>생성할 스페이스의 이름을 입력해 주세요.</ContentsText>
-            <Input placeholder="스페이스의 이름을 입력해 주세요." />
-            <Btn>확인</Btn>
+            <Input
+                placeholder="스페이스의 이름을 입력해 주세요."
+                value={form}
+                onChange={handleChange}
+            />
+            <Btn disabled={!form} onClick={() => mutate()}>
+                확인
+            </Btn>
         </Container>
     );
 };
@@ -59,11 +69,15 @@ const Btn = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
+    border: none;
+    border-radius: 4px;
     color: #fff;
     font-size: 16px;
     font-weight: 500;
-    background-color: linear-gradient(93deg, #3db9ff -27.49%, #2562ff 98.36%);
+    background-image: linear-gradient(93deg, #3db9ff -27.49%, #2562ff 98.36%);
+    cursor: pointer;
     &:disabled {
         background: #3a3945;
+        cursor: not-allowed;
     }
 `;

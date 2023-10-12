@@ -4,10 +4,12 @@ import Button from "../common/button";
 import plus from "../../assets/svg/plus.svg";
 import { Logo } from "../common/logo";
 import { useNavigate } from "react-router-dom";
+import { useGetSpaceList } from "../../apis/database";
 
 export const SpaceList = () => {
     const navigator = useNavigate();
-    const a = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    const { data } = useGetSpaceList();
+
     return (
         <Container>
             <Stack justify="space-between">
@@ -22,13 +24,18 @@ export const SpaceList = () => {
                 </Button>
             </Stack>
             <ListWrapper>
-                {a.map((item, i) => {
+                {data?.data.map((item, i) => {
                     return (
-                        <Space key={i} onClick={() => navigator("/tableList")}>
+                        <Space
+                            key={i}
+                            onClick={async () => {
+                                navigator(`/tableList/${item.id}`);
+                            }}
+                        >
                             <Profile>
                                 <Logo size={46} />
                             </Profile>
-                            <SpaceText>{item}</SpaceText>
+                            <SpaceText>{item.name}</SpaceText>
                         </Space>
                     );
                 })}
@@ -69,9 +76,9 @@ const Space = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
     font-size: 30px;
     &:hover {
         background: rgba(255, 255, 255, 0.12);

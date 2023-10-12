@@ -12,14 +12,22 @@ const Router = createBrowserRouter([
         children: [
             {
                 path: "/",
+                element: <SpaceListPage />,
+            },
+            {
+                path: "/login",
                 element: <LoginPage />,
+            },
+            {
+                path: "/callback",
+                element: <SpaceListPage />,
             },
             {
                 path: "/spaceList",
                 element: <SpaceListPage />,
             },
             {
-                path: "/tableList",
+                path: "/tableList/:id",
                 element: <TableListPage />,
             },
             {
@@ -27,11 +35,11 @@ const Router = createBrowserRouter([
                 element: <AddSpacePage />,
             },
             {
-                path: "/addTable",
+                path: "/addTable/:id",
                 element: <AddTablePage />,
             },
             {
-                path: "/table",
+                path: "/table/:id",
                 element: <TablePage />,
             },
         ],

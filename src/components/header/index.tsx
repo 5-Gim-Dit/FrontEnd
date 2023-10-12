@@ -6,17 +6,17 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const Header = () => {
     const navigator = useNavigate();
-    const lacation = useLocation();
+    const location = useLocation();
     return (
         <Container>
             <Link to="/">
                 <Stack
                     align="center"
-                    gap={10}
-                    margin={[23, 188, 0, 0]}
+                    gap={4}
+                    margin={[23, 237, 0, 0]}
                     height={26}
                 >
-                    <Logo size={20} />
+                    <Logo size={32} />
                     <ServiesText>Zaray</ServiesText>
                 </Stack>
             </Link>
@@ -29,24 +29,15 @@ export const Header = () => {
                     스페이스
                 </ContentText>
             )}
-            {!location.pathname.includes("spaceList") && (
-                <ContentText
-                    onClick={() => {
-                        navigator("/tableList");
-                    }}
-                >
-                    테이블
-                </ContentText>
-            )}
             <Button
                 onClick={() => {
                     navigator("/");
                 }}
                 width="49px"
                 margin={
-                    !location.pathname.includes("spaceList")
-                        ? [18, 0, 18, 148]
-                        : [18, 0, 18, 364]
+                    location.pathname.includes("spaceList")
+                        ? [18, 0, 18, 300]
+                        : [18, 0, 18, 237]
                 }
             >
                 로그아웃
@@ -77,7 +68,6 @@ const ContentText = styled.div`
     color: #fff;
     font-size: 18px;
     font-weight: 400;
-    margin-right: 53px;
     margin-top: 25px;
     cursor: pointer;
     &:hover {

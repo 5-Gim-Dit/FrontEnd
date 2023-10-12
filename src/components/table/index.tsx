@@ -1,126 +1,153 @@
 import styled from "styled-components";
 import { Stack } from "../common/stack";
 import Button from "../common/button";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState } from "react";
 import plus from "../../assets/svg/plus.svg";
-
-type myObject = {
-    [key: string]: number;
-};
+import { useGetTableData } from "../../apis/value";
+import { useGetTableColumns } from "../../apis/table";
+import deleteImg from "../../assets/svg/delete.svg";
+import { useDeleteColumn } from "../../apis/column";
+import { AddFieldModal } from "../addField";
 
 export const Table = () => {
-    const navigator = useNavigate();
+    const params = useParams();
     const [isEdit, setIsEdit] = useState(false);
-    const a: myObject[] = [
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-        { key1: 1, key2: 1, key3: 1 },
-    ];
-    const keys = Object.keys(a[0]);
+    const [isModal, setIsModal] = useState(false);
+    const [columnId, setColumnId] = useState(0);
+    const { data: columns, refetch: columnsRefetch } = useGetTableColumns(
+        params.id!
+    );
+    const columnsLength = columns?.columns.length ? columns?.columns.length : 0;
+    const { data: rows, refetch: rowsRefetch } = useGetTableData(params.id!);
+    const rowsLength = rows?.rows.length ? rows?.rows.length : 0;
+    const { mutate } = useDeleteColumn(columnId, {
+        onSuccess: () => {
+            columnsRefetch();
+            rowsRefetch();
+        },
+        onError: () => {
+            alert("컬럼 삭제에 실패하였습니다.");
+        },
+    });
+
     return (
-        <Container>
-            <Stack justify="space-between">
-                <TitleText>📄 테이블</TitleText>
-                <Button
-                    onClick={() => {
-                        setIsEdit((prev) => !prev);
-                    }}
+        <>
+            <Container>
+                <Stack justify="space-between">
+                    <TitleText>📄 테이블</TitleText>
+                    <Button
+                        onClick={() => {
+                            setIsEdit((prev) => !prev);
+                        }}
+                    >
+                        {isEdit ? "완료" : "수정"}
+                    </Button>
+                </Stack>
+                <Stack
+                    direction="column"
+                    gap={12}
+                    width="712px"
+                    height={600}
+                    overflow="scroll"
                 >
-                    {isEdit ? "완료" : "수정"}
-                </Button>
-            </Stack>
-            <Stack
-                direction="column"
-                gap={12}
-                width="676px"
-                height={600}
-                overflow="scroll"
-            >
-                <Stack gap={12} width={`${(keys.length + 1) * 172 - 12}px`}>
-                    <Square />
-                    {keys.map((item, i) => {
+                    <Stack
+                        gap={12}
+                        width={`${(columnsLength + 1) * 172 - 12}px`}
+                    >
+                        <Square />
+                        {columns?.columns.map((item, i) => {
+                            return (
+                                <>
+                                    <HeaderCell key={i}>
+                                        {item.name}
+                                        <DeleteImg
+                                            src={deleteImg}
+                                            alt=""
+                                            onClick={() => {
+                                                setColumnId(item.id);
+                                                setTimeout(() => {
+                                                    mutate();
+                                                });
+                                            }}
+                                        />
+                                    </HeaderCell>
+                                </>
+                            );
+                        })}
+                    </Stack>
+                    {rows?.rows.map((item, i) => {
                         return (
-                            <HeaderCell
+                            <Stack
+                                gap={12}
                                 key={i}
-                                onClick={() => navigator("/tableList")}
+                                width={`${(columnsLength + 1) * 172 - 12}px`}
+                                position="relative"
                             >
-                                {item}
-                            </HeaderCell>
+                                <BodyCell>#{i + 1}</BodyCell>
+                                {columns?.columns.map((_key, i) => {
+                                    return (
+                                        <BodyCell
+                                            key={i}
+                                            style={{
+                                                background:
+                                                    "rgba(255, 255, 255, 0.08)",
+                                            }}
+                                        >
+                                            {item.values[i]}
+                                        </BodyCell>
+                                    );
+                                })}
+                            </Stack>
                         );
                     })}
                 </Stack>
-                {a.map((item, i) => {
-                    return (
-                        <Stack
-                            gap={12}
-                            key={i}
-                            width={`${(keys.length + 1) * 172 - 12}px`}
+                {isEdit && (
+                    <>
+                        <AddField
+                            height={
+                                rowsLength * 68 - 12 < 600
+                                    ? (rowsLength + 1) * 68 - 12
+                                    : 600
+                            }
+                            style={{
+                                left: `${
+                                    (columnsLength + 1) * 172 + 16 < 732
+                                        ? (columnsLength + 1) * 172 + 16
+                                        : 732
+                                }px`,
+                                top: "64px",
+                            }}
+                            onClick={() => setIsModal(true)}
                         >
-                            <BodyCell>#{i + 1}</BodyCell>
-                            {keys.map((key, i) => {
-                                return (
-                                    <BodyCell
-                                        key={i}
-                                        style={{
-                                            background:
-                                                "rgba(255, 255, 255, 0.08)",
-                                        }}
-                                    >
-                                        {item[key]}
-                                    </BodyCell>
-                                );
-                            })}
-                        </Stack>
-                    );
-                })}
-            </Stack>
-            {isEdit && (
-                <>
-                    <AddField
-                        height={
-                            (a.length + 1) * 68 - 12 < 600
-                                ? (a.length + 1) * 68 - 12
-                                : 600
-                        }
-                        style={{
-                            left: `${
-                                (keys.length + 1) * 172 + 8 < 696
-                                    ? (keys.length + 1) * 172 + 8
-                                    : 696
-                            }px`,
-                            top: "64px",
+                            <img src={plus} alt="" />
+                        </AddField>
+                    </>
+                )}
+            </Container>
+            {isModal && (
+                <Containers>
+                    <AddFieldModal
+                        refetch={columnsRefetch}
+                        onClick={() => {
+                            setIsModal(false);
                         }}
-                    >
-                        <img src={plus} alt="" />
-                    </AddField>
-                    <AddMethod
-                        width={
-                            (keys.length + 1) * 172 - 12 < 676
-                                ? (keys.length + 1) * 172 - 12
-                                : 676
-                        }
-                        style={{
-                            left: "0px",
-                            top: `${
-                                (a.length + 1) * 68 + 72 < 665
-                                    ? (a.length + 1) * 68 + 72
-                                    : 685
-                            }px`,
-                        }}
-                    >
-                        <img src={plus} alt="" />
-                    </AddMethod>
-                </>
+                    />
+                </Containers>
             )}
-        </Container>
+        </>
     );
 };
+
+const Containers = styled.div`
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
 
 const Container = styled.div`
     position: relative;
@@ -150,6 +177,7 @@ const Square = styled.div`
 `;
 
 const HeaderCell = styled.div`
+    position: relative;
     width: 160px;
     height: 56px;
     display: flex;
@@ -160,6 +188,9 @@ const HeaderCell = styled.div`
     color: #fff;
     font-size: 16px;
     font-weight: 600;
+    &:hover {
+        background: #2b75ffce;
+    }
 `;
 
 const BodyCell = styled.div`
@@ -184,15 +215,22 @@ const AddField = styled.div<{ height: number }>`
     align-items: center;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.12);
+    &:hover {
+        background: rgba(255, 255, 255, 0.24);
+    }
 `;
 
-const AddMethod = styled.div<{ width: number }>`
+const DeleteImg = styled.img`
     position: absolute;
-    display: flex;
-    width: ${({ width }) => width}px;
-    height: 32px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.12);
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0;
+    &:hover {
+        opacity: 1;
+        transition: 0.5s;
+        outline: none;
+    }
 `;

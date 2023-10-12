@@ -4,41 +4,47 @@ import { Stack } from "../common/stack";
 import plus from "../../assets/svg/plus.svg";
 import { Pagination } from "../../utils/Pagination";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useGetTableList } from "../../apis/table";
 
 export const TableList = () => {
     const navigator = useNavigate();
+    const params = useParams();
     const [page, setPage] = useState(1);
-    const a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    const { data } = useGetTableList(params.id!);
+    const length = data?.data.length ? data?.data.length : 1;
     return (
         <Container>
             <Stack justify="space-between">
                 <TitleText>📄 테이블 목록</TitleText>
-                <Button onClick={() => navigator("/addTable")} icon={plus}>
+                <Button
+                    onClick={() => navigator(`/addTable/${params.id}`)}
+                    icon={plus}
+                >
                     추가
                 </Button>
             </Stack>
             <ListWrapper>
-                {a
+                {data?.data
                     .slice((page - 1) * 10, (page - 1) * 10 + 10)
                     .map((item, i) => {
                         return (
-                            <Link to="/table">
+                            <Link to={`/table/${item.id}`} key={i}>
                                 <Table key={i}>
                                     <Stack gap={33}>
                                         <TableText>
                                             {i + 1 + (page - 1) * 10}
                                         </TableText>
-                                        <TableText>{item}</TableText>
+                                        <TableText>{item.name}</TableText>
                                     </Stack>
-                                    <DateText>2023.10.10</DateText>
+                                    <DateText>{item.createDate}</DateText>
                                 </Table>
                             </Link>
                         );
                     })}
             </ListWrapper>
             <Pagination
-                pageCount={Math.floor(a.length / 10 + 1)}
+                pageCount={Math.floor(length / 10 + 1)}
                 page={page}
                 setPage={setPage}
             />
@@ -66,6 +72,7 @@ const ListWrapper = styled.div`
     width: 100%;
     height: 590px;
     margin-top: 28px;
+    margin-bottom: 40px;
     overflow: scroll;
 `;
 
@@ -92,6 +99,6 @@ const TableText = styled.div`
 
 const DateText = styled.div`
     color: rgba(255, 255, 255, 0.6);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
 `;

@@ -41,7 +41,7 @@ const BtnStyle = styled.button<{
     border: none;
     border-radius: 4px;
     background-color: #333337;
-    color: rgba(255, 255, 255, 0.8);
+    color: #fff;
     font-size: 14px;
     font-weight: 500;
     margin: ${({ $margin }) => $margin.join("px ")}px;

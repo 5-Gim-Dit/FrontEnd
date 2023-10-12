@@ -13,7 +13,6 @@ export function Pagination({ pageCount, page, setPage }: PropsType) {
     const changePageNumber = (num: number) => {
         setPage(num);
     };
-    console.log(page, pageCount);
     return (
         <Nav>
             <Img

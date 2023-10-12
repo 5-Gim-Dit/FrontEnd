@@ -1,12 +1,17 @@
 import styled from "styled-components";
 import { Stack } from "../../common/stack";
-import { Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { formType } from "../../../apis/table/type";
 
 interface propsType {
     setNext: Dispatch<SetStateAction<number>>;
+    form: formType;
+    handleChange: (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => void;
 }
 
-export const AddTableName = ({ setNext }: propsType) => {
+export const AddTableName = ({ setNext, form, handleChange }: propsType) => {
     return (
         <Container>
             <Stack justify="space-between">
@@ -19,8 +24,15 @@ export const AddTableName = ({ setNext }: propsType) => {
                 </Stack>
             </Stack>
             <ContentsText>생성할 테이블의 이름을 입력해 주세요.</ContentsText>
-            <Input placeholder="테이블의 이름을 입력해 주세요." />
-            <Btn onClick={() => setNext(2)}>다음</Btn>
+            <Input
+                placeholder="테이블의 이름을 입력해 주세요."
+                value={form.tableName}
+                name="tableName"
+                onChange={handleChange}
+            />
+            <Btn disabled={!form.tableName} onClick={() => setNext(2)}>
+                다음
+            </Btn>
         </Container>
     );
 };
@@ -83,7 +95,9 @@ const Btn = styled.button`
     color: #fff;
     font-size: 16px;
     font-weight: 500;
-    background-color: linear-gradient(93deg, #3db9ff -27.49%, #2562ff 98.36%);
+    border: none;
+    border-radius: 4px;
+    background-image: linear-gradient(93deg, #3db9ff -27.49%, #2562ff 98.36%);
     cursor: pointer;
     &:disabled {
         background: #3a3945;

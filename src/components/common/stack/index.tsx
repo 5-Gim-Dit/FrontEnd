@@ -82,6 +82,6 @@ const Container = styled.div<stylePropsType>`
     justify-content: ${({ $justify }) => $justify};
     flex-wrap: ${({ wrap }) => wrap};
     gap: ${({ $gap }) => $gap}px;
-    margin: ${({ $margin }) => $margin?.join("px ")};
+    margin: ${({ $margin }) => $margin?.join("px ")}px;
     overflow: ${({ overflow }) => overflow};
 `;

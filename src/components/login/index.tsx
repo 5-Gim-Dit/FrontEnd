@@ -2,13 +2,8 @@ import styled from "styled-components";
 import kakao from "../../assets/svg/kakao.svg";
 import { Stack } from "../common/stack";
 import { Logo } from "../common/logo";
-import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
-    const navigator = useNavigate();
-    const kakaoOauth = () => {
-        navigator("/spaceList");
-    };
     return (
         <Container>
             <Stack margin={[37, 0, 0, 0]} gap={10} align="center">
@@ -16,7 +11,13 @@ export const Login = () => {
                 <ServiesText>ZARAY</ServiesText>
             </Stack>
             <ContentsText>AI를 통한 백엔드 노코딩 툴</ContentsText>
-            <KakaoBtn onClick={kakaoOauth}>
+            <KakaoBtn
+                onClick={() =>
+                    (window.location.href = `${
+                        import.meta.env.VITE_APP_BASE_URL
+                    }/oauth2/authorization/kakao`)
+                }
+            >
                 <KakaoImg src={kakao} alt="" />
                 <KakaoText>Kakao 로그인</KakaoText>
             </KakaoBtn>
